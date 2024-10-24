@@ -24,15 +24,16 @@ else
 	CFLAGS  = -O2 -Wall
 endif
 
-BUILD		= $(CC) $(CFLAGS) -I$(PDCURSES_SRCDIR)
+BUILD		= $(CROSS_COMPILE)$(CC) $(CFLAGS) -I$(PDCURSES_SRCDIR) -I$(SYSROOT)/usr/include
 
 ifeq ($(shell uname),Darwin)
 	DEMOFLAGS = -Dmain=SDL_main
 endif
 
-LINK		= $(CC)
+LINK		= $(CROSS_COMPILE)$(CC)
 LDFLAGS		= $(LIBCURSES) $(SLIBS)
-RANLIB		= ranlib
+RANLIB		= $(CROSS_COMPILE)ranlib
+AR			= $(CROSS_COMPILE)ar
 LIBCURSES	= libpdcurses.a
 
 DEMOS		= firework newdemo ptest rain testcurs tuidemo worm xmas \
@@ -51,7 +52,7 @@ demos:	$(DEMOS)
 	strip $(DEMOS)
 
 $(LIBCURSES) : $(LIBOBJS) $(PDCOBJS)
-	ar rv $@ $?
+	$(AR) rv $@ $?
 	-$(RANLIB) $@
 
 $(LIBOBJS) $(PDCOBJS) : $(PDCURSES_HEADERS)
